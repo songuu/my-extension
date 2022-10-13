@@ -1,17 +1,12 @@
-import packageJson from "../../package.json";
+import packageJson from "../package.json";
+import { ManifestType } from "./manifest-type";
 
-const manifest = {
+const manifest: ManifestType = {
   manifest_version: 3,
   name: packageJson.name,
-  version: packageJson.version, // 当前插件版本
+  version: packageJson.version,
   description: packageJson.description,
-  icons: {
-    // 不同尺寸使用场景不同,
-    "16": "icons/16.png",
-    "32": "icons/32.png",
-    "48": "icons/48.png",
-    "128": "icons/128.png",
-  },
+  options_page: "src/pages/options/index.html",
   background: { service_worker: "src/pages/background/index.js" },
   action: {
     default_popup: "src/pages/popup/index.html",
@@ -19,26 +14,38 @@ const manifest = {
       "16": "icons/16.png",
       "32": "icons/32.png",
       "48": "icons/48.png",
-      "128": "icons/128.png",
-    },
+      "128": "icons/128.png"
+    }
+  },
+  // chrome_url_overrides: {
+  //   newtab: "src/pages/newtab/index.html",
+  // },
+  icons: {
+    "16": "icons/16.png",
+    "32": "icons/32.png",
+    "48": "icons/48.png",
+    "128": "icons/128.png"
   },
   content_scripts: [
     {
+      // matches: ["http://*/*", "https://*/*", "<all_urls>"],
       matches: ["<all_urls>"],
       js: ["src/pages/content/index.js"],
       // content 样式需要特殊指定，若使用 antd，需要另外添加 antd 部分样式
-      // css: ["assets/css/contentStyle.chunk.css"],
+      css: ["assets/css/contentStyle.chunk.css"],
     },
   ],
-  options_page: "src/pages/options/index.html",
+  // devtools_page: "src/pages/devtools/index.html",
   web_accessible_resources: [
     {
-      resources: ["assets/js/*.js", "assets/css/*.css"],
+      resources: [
+        "assets/js/*.js",
+        "assets/css/*.css",
+      ],
       matches: ["*://*/*"],
     },
   ],
   permissions: [
-    // 操作 chrome 的权限
     "storage",
     "activeTab",
     "scripting",

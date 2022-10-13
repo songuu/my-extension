@@ -1,11 +1,9 @@
 import { defineConfig } from "vite";
 import react from "@vitejs/plugin-react";
-import inspect from "vite-plugin-inspect";
 import path, { resolve } from "path";
 import makeManifest from "./utils/plugins/make-manifest";
-import customDynamicImport from "./utils/plugins/custom-dynamic-import";
-import vitePluginImp from "vite-plugin-imp";
-import copy from "rollup-plugin-copy";
+import customDynamicImport from './utils/plugins/custom-dynamic-import';
+import vitePluginImp from 'vite-plugin-imp'
 
 const root = resolve(__dirname, "src");
 const pagesDir = resolve(root, "pages");
@@ -25,18 +23,9 @@ export default defineConfig({
     },
   },
   plugins: [
-    react(),
-    // inspect(),
-    makeManifest({ outDir }),
-    // customDynamicImport(),
-    /* copy({
-      targets: [
-        {
-          src: resolve(assetsDir, "icons"),
-          dest: resolve(outDir, "src/pages/popup/icons"),
-        },
-      ],
-    }), */
+    react(), 
+    makeManifest(), 
+    customDynamicImport(),
     // 按需加载配置
     vitePluginImp({
       libList: [
@@ -55,7 +44,9 @@ export default defineConfig({
       input: {
         popup: resolve(pagesDir, "popup", "index.html"),
         options: resolve(pagesDir, "options", "index.html"),
+        
         background: resolve(pagesDir, "background", "index.ts"),
+
         // content 需要在 manifest 中指定 css 资源
         content: resolve(pagesDir, "content", "index.ts"),
         contentStyle: resolve(pagesDir, "content", "style.less"),
@@ -68,9 +59,9 @@ export default defineConfig({
         assetFileNames: (assetInfo: {
           name: string | undefined;
           source: string | Uint8Array;
-          type: "asset";
+          type: 'asset';
         }) => {
-          const { dir, name: _name } = path.parse(assetInfo.name || "");
+          const { dir, name: _name } = path.parse(assetInfo.name || '');
           const assetFolder = getLastElement(dir.split("/"));
           const name = assetFolder + firstUpperCase(_name);
           return `assets/[ext]/${name}.chunk.[ext]`;
@@ -83,10 +74,10 @@ export default defineConfig({
       less: {
         javascriptEnabled: true,
         modifyVars: {
-          "@primary-color": "#1e80ff", // 设置 antd 主题色
+          '@primary-color': '#1e80ff',//设置 antd 主题色
         },
       },
-    },
+    }
   },
 });
 
