@@ -101,6 +101,8 @@ const Options: React.FC = () => {
     );
   }), [sentences]);
 
+  console.log("sentences", sentences)
+
   return (
     <div className='options-container'>
       <Card 
