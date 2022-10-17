@@ -33,6 +33,7 @@ const manifest: ManifestType = {
       js: ["src/pages/content/index.js"],
       // content 样式需要特殊指定，若使用 antd，需要另外添加 antd 部分样式
       css: ["assets/css/contentStyle.chunk.css"],
+      run_at: "document_start"
     },
   ],
   // devtools_page: "src/pages/devtools/index.html",

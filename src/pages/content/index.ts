@@ -6,4 +6,4 @@
  */
 import("./components/Content");
 
-import("./components/Insert");
+import("./components/Plugins");
