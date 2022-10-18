@@ -52,6 +52,11 @@
     "activeTab",
     "scripting",
     "contextMenus",
-    "notifications"
+    "notifications",
+    "webRequest",
+    "tabs"
+  ],
+  "host_permissions": [
+    "*://*/*"
   ]
 }

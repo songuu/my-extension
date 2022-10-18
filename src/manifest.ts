@@ -14,8 +14,8 @@ const manifest: ManifestType = {
       "16": "icons/16.png",
       "32": "icons/32.png",
       "48": "icons/48.png",
-      "128": "icons/128.png"
-    }
+      "128": "icons/128.png",
+    },
   },
   // chrome_url_overrides: {
   //   newtab: "src/pages/newtab/index.html",
@@ -24,7 +24,7 @@ const manifest: ManifestType = {
     "16": "icons/16.png",
     "32": "icons/32.png",
     "48": "icons/48.png",
-    "128": "icons/128.png"
+    "128": "icons/128.png",
   },
   content_scripts: [
     {
@@ -33,16 +33,13 @@ const manifest: ManifestType = {
       js: ["src/pages/content/index.js"],
       // content 样式需要特殊指定，若使用 antd，需要另外添加 antd 部分样式
       css: ["assets/css/contentStyle.chunk.css"],
-      run_at: "document_start"
+      run_at: "document_start",
     },
   ],
   // devtools_page: "src/pages/devtools/index.html",
   web_accessible_resources: [
     {
-      resources: [
-        "assets/js/*.js",
-        "assets/css/*.css",
-      ],
+      resources: ["assets/js/*.js", "assets/css/*.css"],
       matches: ["*://*/*"],
     },
   ],
@@ -52,7 +49,10 @@ const manifest: ManifestType = {
     "scripting",
     "contextMenus",
     "notifications",
+    "webRequest",
+    "tabs",
   ],
+  host_permissions: ["*://*/*"],
 };
 
 export default manifest;
