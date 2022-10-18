@@ -23,8 +23,8 @@ export default defineConfig({
     },
   },
   plugins: [
-    react(), 
-    makeManifest(), 
+    react(),
+    makeManifest(),
     customDynamicImport(),
     // 按需加载配置
     vitePluginImp({
@@ -44,7 +44,7 @@ export default defineConfig({
       input: {
         popup: resolve(pagesDir, "popup", "index.html"),
         options: resolve(pagesDir, "options", "index.html"),
-        
+
         background: resolve(pagesDir, "background", "index.ts"),
 
         // content 需要在 manifest 中指定 css 资源
