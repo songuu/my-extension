@@ -34,6 +34,8 @@ const getCurrentTab = async () => {
 
 async function copyText(text: any) {
   let currentTab = await getCurrentTab();
+
+  console.log("currentTab", currentTab);
   /* await chrome.scripting.executeScript({
     target: { tabId: currentTab.id },
     func: (text) => {
@@ -50,7 +52,9 @@ async function copyText(text: any) {
   }); */
 }
 
-async function collectParagraph() {
+async function collectParagraph(urls: any[]) {
+  console.log("当前urls:", urls);
+
   let article = "";
 
   for (let url of urls) {
@@ -77,7 +81,7 @@ async function collectParagraph() {
     let result = await response.text();
     let content = JSON.parse(result.substring(8, result.length - 1));
     for (let para of content.body) {
-      // console.log(para.c)
+      console.log("===========>", para.c)
       article += para.c;
       if (para.ps != null)
         for (let i = 0; i < para.ps["_enter"]; i++) {
@@ -87,28 +91,32 @@ async function collectParagraph() {
   }
   return article;
 }
-let urls = await getPageUrl();
+const handleSort = (urls: any[]) => {
+  urls.sort((u1: any, u2: any) => {
+    let q1 = getQuery(u1);
+    let q2 = getQuery(u2);
+    let s1 = q1["x-bce-range"].split("-")[0];
+    let s2 = q2["x-bce-range"].split("-")[0];
+    return s2 - s1;
+  });
 
-urls.sort((u1: any, u2: any) => {
-  let q1 = getQuery(u1);
-  let q2 = getQuery(u2);
-  let s1 = q1["x-bce-range"].split("-")[0];
-  let s2 = q2["x-bce-range"].split("-")[0];
-  return s2 - s1;
-});
+  return urls;
+}
 
-async function handleContextMenus(info: any) {
+
+async function handleContextMenus(info: any, urls: any[]) {
+  urls = handleSort(urls);
+
   let article = "";
 
-  if (info.menuItemId === "2" && info.selectionText !== undefined) {
+  if (info.selectionText !== undefined) {
     await copyText(info.selectionText);
   } else if (
-    info.menuItemId === "2" &&
     info.pageUrl.indexOf("https://wenku.baidu.com") !== -1
   ) {
-    // article += await collectParagraph(...urls);
+    article += await collectParagraph(urls);
     await copyText(article);
   }
 }
 
-export default handleContextMenus;
+export { handleContextMenus, getPageUrl };

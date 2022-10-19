@@ -1,7 +1,11 @@
 import addSentence from "./copy_board";
-import handleContextMenus from "./copy_baiduwenku";
+import { handleContextMenus, getPageUrl } from "./copy_baiduwenku";
 
 // src/pages/background/index.ts
+let urls: any = [];
+(async () => {
+  urls = await getPageUrl();
+})()
 
 chrome.runtime.onInstalled.addListener(() => {
   chrome.contextMenus.create({
@@ -34,7 +38,7 @@ chrome.contextMenus.onClicked.addListener((e: any) => {
       addSentence();
       break;
     case "2":
-      handleContextMenus(e);
+      handleContextMenus(e, urls);
       break;
     default:
       break;
