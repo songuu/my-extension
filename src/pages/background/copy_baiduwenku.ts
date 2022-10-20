@@ -1,15 +1,20 @@
+let pagesRequest: any = [];
+
+const removeRequest = async () => {
+  pagesRequest = [];
+};
+
 async function getPageUrl() {
-  let pagesRequest: any = [];
   chrome.webRequest.onHeadersReceived.addListener(
     (details) => {
-      // console.log(details.url)
       if (details.url.indexOf("0.json") !== -1) {
+        // if (!pagesRequest.includes(details.url)) {
         pagesRequest.push(details.url);
+        // }
       }
     },
     { urls: ["https://*.bdimg.com/*"] }
   );
-  return pagesRequest;
 }
 
 function getQuery(u: any) {
@@ -33,6 +38,7 @@ const getCurrentTab = async () => {
 };
 
 async function copyText(text: any) {
+  console.log("当前text:", text);
   let currentTab = await getCurrentTab();
 
   console.log("currentTab", currentTab);
@@ -53,12 +59,17 @@ async function copyText(text: any) {
 }
 
 async function collectParagraph(urls: any[]) {
-  console.log("当前urls:", urls);
+  console.log("当前urls1:", urls);
 
   let article = "";
 
+  let i = 0;
+
   for (let url of urls) {
     console.log("当前url:", url);
+
+    i++;
+
     let response = await fetch(url, {
       headers: {
         accept: "*/*",
@@ -80,13 +91,20 @@ async function collectParagraph(urls: any[]) {
     });
     let result = await response.text();
     let content = JSON.parse(result.substring(8, result.length - 1));
+
     for (let para of content.body) {
-      console.log("===========>", para.c)
       article += para.c;
       if (para.ps != null)
         for (let i = 0; i < para.ps["_enter"]; i++) {
           article += "\n";
         }
+    }
+
+    console.log("当前article:", article);
+
+    // 需要限制最大的请求次数 防止爆栈
+    if (i === 10) {
+      break;
     }
   }
   return article;
@@ -97,26 +115,34 @@ const handleSort = (urls: any[]) => {
     let q2 = getQuery(u2);
     let s1 = q1["x-bce-range"].split("-")[0];
     let s2 = q2["x-bce-range"].split("-")[0];
-    return s2 - s1;
+    return s1 - s2;
   });
 
   return urls;
-}
+};
 
-
-async function handleContextMenus(info: any, urls: any[]) {
-  urls = handleSort(urls);
+async function handleContextMenus(info: any) {
+  console.log("info:", info);
+  console.log("当前pagesRequest:", pagesRequest);
+  const urls = handleSort(pagesRequest);
 
   let article = "";
 
   if (info.selectionText !== undefined) {
     await copyText(info.selectionText);
-  } else if (
-    info.pageUrl.indexOf("https://wenku.baidu.com") !== -1
-  ) {
+  } else if (info.pageUrl.indexOf("https://wenku.baidu.com") !== -1) {
     article += await collectParagraph(urls);
     await copyText(article);
   }
+
+  await chrome.notifications.create({
+    type: "basic",
+    iconUrl: "http://qiniu.songuu.top/16.png",
+    title: "来了来了",
+    message: "复制成功",
+  });
+
+  await removeRequest();
 }
 
 export { handleContextMenus, getPageUrl };
